@@ -1,7 +1,149 @@
-.header {
-    width: 100%;
-    height: 56px;
-    background-color: black;
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.chat-container {
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    align-self: right;
+    flex: 1;
+}
+
+.chat-messages {
+    height: 650px;
+    overflow-y: scroll;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+   /*  max-height: 400px; */
+    display: flex;
+    flex-direction: column; /* Alinea los mensajes en una columna */
+    align-items: flex-start; /* Alinea los mensajes a la izquierda */
+}
+
+.message {
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+}
+
+.message.received {
+    background-color: #f2f2f2;
+    width: fit-content;
+    align-self: flex-start; /* Alinea a la izquierda */
+}
+
+.message.sent {
+    background-color: #0084ff;
     color: white;
-    text-align: center;
+    width:fit-content;
+    text-align: right; /* Alinea el texto a la derecha */
+    align-self: flex-end; /* Alinea a la derecha */
+}
+
+.input-container {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+#message-input {
+    flex: 1;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+#send-button {
+    background-color: #0084ff;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 5px 10px;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+#contactosLista{
+    display: inline;
+}
+
+.contacts {
+    width: 38%;
+    padding: 20px;
+    color: black;
+    background-color: #3498db;
+}
+
+.contacts h2 {
+    margin-bottom: 10px;
+}
+
+.contacts ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.contacts li {
+    margin: 5px 0;
+    cursor: pointer;
+}
+
+.section-container {
+    display: flex;
+    align-items: flex-start; 
+}
+
+.contact-menu {
+    width: 300px;
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
+    height: 100vh;
+}
+
+.search-bar {
+    padding: 10px;
+    background-color: #3498db;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 5px;
+    border: none;
+    border-radius: 5px;
+}
+
+.contact-list {
+    padding: 20px;
+}
+
+.contact {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.contact img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.contact-info h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.contact-info p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #777;
 }

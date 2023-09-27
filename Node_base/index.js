@@ -4,6 +4,7 @@ const express = require('express'); //Para el manejo del servidor Web
 const exphbs  = require('express-handlebars'); //Para el manejo de los HTML
 const bodyParser = require('body-parser'); //Para el manejo de los strings JSON
 const MySQL = require('./modulos/mysql'); //Añado el archivo mysql.js presente en la carpeta módulos
+//const session = require('express-session')
 
 const app = express(); //Inicializo express para el manejo de las peticiones
 
@@ -23,7 +24,7 @@ const server=app.listen(Listen_Port, function() {
 
 const io= require('socket.io')(server);
 
-/*const sessionNiddleware=session({
+/*const sessionMiddleware=session({
     secret: 'sararasthastka',
     resave: true,
     saveUnintialized: false,
