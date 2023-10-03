@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Chat Web</title>
+</head>
+<body>
+    <section class="section-container">
+        <div class="contact-menu">
+            <div class="search-bar">
+                <button class="newContacto">Nuevo Contacto</button><br><br>
+                <input type="text" placeholder="Buscar contactos..."><br>
+            </div>
+            <div class="contact-list">
+                {{#each chats}}
+                <div class="contact-info">
+                    <h3>{{this.chats}}</h3>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+        <div class="chat-container">
+            
+            <div class="chat-messages">
+                <div class="message received">
+                    <p>Hola, ¿cómo estás?</p>
+                </div>
+                <div class="message sent">
+                    <p>¡Hola! Estoy bien, gracias.</p>
+                </div>
+            </div>
+            <div class="input-container">
+                <input type="text" id="message-input" placeholder="Escribe un mensaje...">
+                <button id="send-button">Enviar</button>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

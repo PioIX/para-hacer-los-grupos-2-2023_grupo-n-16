@@ -48,11 +48,13 @@ io.use(function(socket, next) {
     A PARTIR DE ESTE PUNTO GENERAREMOS NUESTRO CÓDIGO (PARA RECIBIR PETICIONES, MANEJO DB, ETC.)
 */
 
-app.get('/', function(req, res)
+app.get('/', async function(req, res)
 {
     //Petición GET con URL = "/", lease, página principal.
-    console.log(req.query); //En req.query vamos a obtener el objeto con los parámetros enviados desde el frontend por método GET
-    res.render('login', null); //Renderizo página "login" sin pasar ningún objeto a Handlebars
+    console.log("Arranca la página", req.query); //En req.query vamos a obtener el objeto con los parámetros enviados desde el frontend por método GET
+    let chats = await MySQL.realizarQuery('SELECT nombre FROM Chats');
+    res.render('inicio',{chats:chats} ); //Renderizo página "login" sin pasar ningún objeto a Handlebars
+    console.log(chats);
 });
 
 app.get('/login', function(req, res)
