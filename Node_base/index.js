@@ -52,9 +52,7 @@ app.get('/', async function(req, res)
 {
     //Petición GET con URL = "/", lease, página principal.
     console.log("Arranca la página", req.query); //En req.query vamos a obtener el objeto con los parámetros enviados desde el frontend por método GET
-    let chats = await MySQL.realizarQuery('SELECT nombre FROM Chats');
-    res.render('inicio',{chats:chats} ); //Renderizo página "login" sin pasar ningún objeto a Handlebars
-    console.log(chats);
+    res.render('login',null ); //Renderizo página "login" sin pasar ningún objeto a Handlebars
 });
 
 app.get('/login', function(req, res)
@@ -62,7 +60,7 @@ app.get('/login', function(req, res)
     //Petición GET con URL = "/login"
     console.log("Soy un pedido GET", req.query); 
     //En req.query vamos a obtener el objeto con los parámetros enviados desde el frontend por método GET
-    res.render('home', null); //Renderizo página "home" sin pasar ningún objeto a Handlebars
+    res.render('inicio', null); //Renderizo página "home" sin pasar ningún objeto a Handlebars
 });
 
 app.post('/login', function(req, res)
@@ -71,9 +69,16 @@ app.post('/login', function(req, res)
     console.log("Soy un pedido POST", req.body); 
     //En req.body vamos a obtener el objeto con los parámetros enviados desde el frontend por método POST
     //res.render('home', { mensaje: "Hola mundo!", usuario: req.body.usuario}); //Renderizo página "home" enviando un objeto de 2 parámetros a Handlebars
-    res.render('home', null); //Renderizo página "home" sin pasar ningún objeto a Handlebars
+    res.render('inicio', null); //Renderizo página "home" sin pasar ningún objeto a Handlebars
 });
-
+app.get('/inicio', async function(req, res)
+{
+    //Petición GET con URL = "/", lease, página principal.
+    console.log("Arranca la página", req.query); //En req.query vamos a obtener el objeto con los parámetros enviados desde el frontend por método GET
+    let chats = await MySQL.realizarQuery('SELECT nombre FROM Chats');
+    res.render('inicio',{chats:chats} ); //Renderizo página "login" sin pasar ningún objeto a Handlebars
+    console.log(chats);
+});
 app.put('/login', function(req, res) {
     //Petición PUT con URL = "/login"
     console.log("Soy un pedido PUT", req.body); //En req.body vamos a obtener el objeto con los parámetros enviados desde el frontend por método PUT
@@ -85,6 +90,20 @@ app.delete('/login', function(req, res) {
     console.log("Soy un pedido DELETE", req.body); //En req.body vamos a obtener el objeto con los parámetros enviados desde el frontend por método DELETE
     res.send(null);
 });
+/* REGISTRO*/
+app.get('/botonRegistrarse', function(req, res)
+{
+    console.log("Soy un pedido GET/botonRegistrarse", req.query); 
+    res.render('registro', null); 
+});
+
+app.post('/enviarRegistro', async function(req, res){
+    console.log("Soy un pedido POST/enviarRegistro", req.body);
+        await MySQL.realizarQuery(`INSERT INTO Contactos(usuario, contraseña) VALUES("${req.body.usuario}", "${req.body.contraseña}") `)
+        console.log(await (MySQL.realizarQuery("SELECT * FROM Contactos")))
+        res.render('inicio', {usuario:req.body.usuario});
+});
+
 
 io.on("connection", (socket) => {
     //Esta línea es para compatibilizar con lo que venimos escribiendo

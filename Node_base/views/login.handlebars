@@ -1,21 +1,33 @@
-<form action="/login" method="GET" class="container-sm">
-    <div class="mb-3 form-group">
-        <h2>Login de prueba</h2>
+<!DOCTYPE html>
+<header>
+</header>
+<body id="body" style="align-content: center;">
+   <form action="/login" method="GET" class="container-sm" id="RegLog">
+        <div class="mb-3 form-group">
+            <h2>CHAT LOGIN</h2>
+        </div>
+        <div class="mb-3 form-group">
+            <label for="usuarioId" class="form-label" style="font-size: 30px;">USUARIO</label>
+            <input type="text" class="form-control" id="usuarioId" name="usuario" value="" placeholder="Usuario" style="width: 300px; height:50px;">
+        </div>
+        <div class="mb-3 form-group">
+            <label for="passwordId" class="form-label" style="font-size: 30px;">CONTRASEÑA</label>
+            <input type="password" class="form-control" id="passwordId" placeholder="Contraseña" style="width: 300px; height:50px;">
+        </div>
+        <div class="mb-3 form-check">
+            <input type="submit" class="btn btn-primary" value="INICIAR SESIÓN">
+        </div>
+    </form> 
+    <form action="/botonRegistrarse" method="GET" class="btn btn-primary" id="Regi">
+            <div class="mb-3 form-check">
+                <input type="submit" class="botonesEnGeneral" value="REGISTRARSE">
+            </div>
+                <!--quiero regitarse -->
+        </form>
+    </form>             
+        <form action="/home" method="POST" class="container-sm" id="formlogin">
+        </form>
     </div>
-    <div class="mb-3 form-group">
-        <label for="usuarioId" class="form-label">Usuario</label>
-        <input type="text" class="form-control" id="usuarioId" name="usuario" value="" placeholder="Ingrese un nombre de usuario">
-    </div>
-    <div class="mb-3 form-group">
-        <label for="passwordId" class="form-label">Password</label>
-        <input type="password" class="form-control" id="passwordId" placeholder="Contraseña">
-    </div>
-    <div class="mb-3 form-check">
-        <input type="submit" class="btn btn-primary" value="Ingresar">
-    </div>
-    <div>
-        <button id="prueba" onclick="funcionPrueba" value="funciondeprueba">
-    </div>
-</form>
+</body>
 
 
