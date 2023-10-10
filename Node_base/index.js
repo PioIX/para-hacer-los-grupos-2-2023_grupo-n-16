@@ -7,7 +7,7 @@ const MySQL = require('./modulos/mysql'); //Añado el archivo mysql.js presente 
 //const session = require('express-session')
 
 const app = express(); //Inicializo express para el manejo de las peticiones
-
+const session = require('express-session');
 app.use(express.static('public')); //Expongo al lado cliente la carpeta "public"
 
 app.use(bodyParser.urlencoded({ extended: false })); //Inicializo el parser JSON
@@ -36,6 +36,8 @@ io.use(function(socket, next) {
     sessionMiddleware(socket.request, socket.request.res, next);
 });*/
 
+app.use(session({secret: '123456', resave: true, saveUninitialized: true}));
+
 /*
     A PARTIR DE ESTE PUNTO GENERAREMOS NUESTRO CÓDIGO (PARA RECIBIR PETICIONES, MANEJO DB, ETC.)
     A PARTIR DE ESTE PUNTO GENERAREMOS NUESTRO CÓDIGO (PARA RECIBIR PETICIONES, MANEJO DB, ETC.)
@@ -55,12 +57,12 @@ app.get('/', async function(req, res)
     res.render('login',null ); //Renderizo página "login" sin pasar ningún objeto a Handlebars
 });
 
-app.get('/login', function(req, res)
+app.get('/login', async function(req, res)
 {
     //Petición GET con URL = "/login"
-    console.log("Soy un pedido GET", req.query); 
-    //En req.query vamos a obtener el objeto con los parámetros enviados desde el frontend por método GET
-    res.render('inicio', null); //Renderizo página "home" sin pasar ningún objeto a Handlebars
+    console.log("Soy un pedido GET", req.query);  
+    let chats = await MySQL.realizarQuery('SELECT nombre FROM Chats');
+    res.render('inicio',{chats:chats} ); //Renderizo página "login" sin pasar ningún objeto a Handlebars
 });
 
 app.post('/login', function(req, res)
@@ -112,7 +114,16 @@ io.on("connection", (socket) => {
     //Esto serìa el equivalente a un app.post, app.get...
     socket.on('incoming-message', data => {
         console.log("INCOMING MESSAGE:", data);
-        io.edmit("server-message", {mensaje:"MENSAJE DE SERVIDOR"})
+        io.to("").emit("server-message", {mensaje:"MENSAJE DE SERVIDOR"})
+    });
+
+    socket.on('join-room', data => {
+        console.log("INCOMING MESSAGE:", data);
+        io.emit("server-message", {mensaje:"MENSAJE DE SERVIDOR"})
+    });
+
+    socket.on('new message', data => {
+        
     });
 });
 

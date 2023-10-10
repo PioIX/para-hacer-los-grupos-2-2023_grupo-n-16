@@ -10,13 +10,13 @@
     <section class="section-container">
         <div class="contact-menu">
             <div class="search-bar">
-                <button class="newContacto">Nuevo Contacto</button><br><br>
                 <input type="text" placeholder="Buscar contactos..."><br>
             </div>
             <div class="contact-list">
                 {{#each chats}}
                 <div class="contact-info">
-                    <h3>{{this.chats}}</h3>
+                    <h3>{{this.nombre}}</h3>
+                    <button id="{{this.nombre}}" onclick="unirseASala(this)">{{this.nombre}}</button>
                 </div>
                 {{/each}}
             </div>
