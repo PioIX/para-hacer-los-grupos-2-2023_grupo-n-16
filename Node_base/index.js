@@ -104,6 +104,12 @@ app.post('/enviarRegistro', async function(req, res){
         res.render('inicio', {usuario:req.body.usuario});
 });
 
+//ENVIAR MENSAJE
+app.post('/enviarMensaje', async function(req, res){
+    console.log("Soy un pedido Enviar Mensaje", req.body.mensaje);
+    await MySQL.realizarQuery(`INSERT INTO Mensajes(mensaje, fecha) VALUES ("${req.body.mensaje}", "${Date.now()}")`)
+})
+
 
 io.on("connection", (socket) => {
     //Esta línea es para compatibilizar con lo que venimos escribiendo
