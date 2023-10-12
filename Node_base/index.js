@@ -60,9 +60,12 @@ app.get('/login', async function(req, res)
     //Petición GET con URL = "/login"
     console.log("Soy un pedido GET", req.query);  
     let chats = await MySQL.realizarQuery('SELECT nombre FROM Chats');
-    let userLoggeado= await MySQL.realizarQuery('SELECT * FROM Contactos WHERE usuario="${req.query.usuario} and contraseña="${req.query.contraseña}"')
-    req.session.idUsuario=
-    res.render('inicio',{chats:chats} ); //Renderizo página "login" sin pasar ningún objeto a Handlebars
+    let userLoggeado= await MySQL.realizarQuery(`SELECT * FROM Contactos WHERE usuario= "${req.query.usuario}" and contraseña="${req.query.contraseña}"`)
+    if(userLoggeado){
+        let idUsuario=await MySQL.realizarQuery(`SELECT idContacto FROM Contactos WHERE usuario="${req.query.usuario}"`)
+        req.session.idUsuario=idUsuario
+        res.render('inicio',{chats:chats} );
+    } 
 });
 
 app.get('/inicio', async function(req, res)
@@ -101,7 +104,7 @@ app.post('/enviarRegistro', async function(req, res){
 //ENVIAR MENSAJE
 app.post('/enviarMensaje', async function(req, res){
     console.log("Soy un pedido Enviar Mensaje", req.body.mensaje);
-    await MySQL.realizarQuery(`INSERT INTO Mensajes(mensaje, fecha) VALUES ("${req.body.mensaje}", ${Date()})`);
+    await MySQL.realizarQuery(`INSERT INTO Mensajes(mensaje, fecha) VALUES ("${req.body.mensaje}", ${getDate()})`);
     res.render('inicio', null);
 })
 
