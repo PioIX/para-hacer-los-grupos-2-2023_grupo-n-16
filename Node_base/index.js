@@ -60,17 +60,11 @@ app.get('/login', async function(req, res)
     //Petición GET con URL = "/login"
     console.log("Soy un pedido GET", req.query);  
     let chats = await MySQL.realizarQuery('SELECT nombre FROM Chats');
+    let userLoggeado= await MySQL.realizarQuery('SELECT * FROM Contactos WHERE usuario="${req.query.usuario} and contraseña="${req.query.contraseña}"')
+    req.session.idUsuario=
     res.render('inicio',{chats:chats} ); //Renderizo página "login" sin pasar ningún objeto a Handlebars
 });
 
-app.post('/login', function(req, res)
-{
-    //Petición POST con URL = "/login"
-    console.log("Soy un pedido POST", req.body); 
-    //En req.body vamos a obtener el objeto con los parámetros enviados desde el frontend por método POST
-    //res.render('home', { mensaje: "Hola mundo!", usuario: req.body.usuario}); //Renderizo página "home" enviando un objeto de 2 parámetros a Handlebars
-    res.render('inicio', null); //Renderizo página "home" sin pasar ningún objeto a Handlebars
-});
 app.get('/inicio', async function(req, res)
 {
     //Petición GET con URL = "/", lease, página principal.
@@ -107,7 +101,8 @@ app.post('/enviarRegistro', async function(req, res){
 //ENVIAR MENSAJE
 app.post('/enviarMensaje', async function(req, res){
     console.log("Soy un pedido Enviar Mensaje", req.body.mensaje);
-    await MySQL.realizarQuery(`INSERT INTO Mensajes(mensaje, fecha) VALUES ("${req.body.mensaje}", "${Date.now()}")`)
+    await MySQL.realizarQuery(`INSERT INTO Mensajes(mensaje, fecha) VALUES ("${req.body.mensaje}", ${Date()})`);
+    res.render('inicio', null);
 })
 
 
