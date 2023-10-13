@@ -27,7 +27,7 @@ const io= require('socket.io')(server);
 const sessionMiddleware=session({
     secret: 'sararasthastka',
     resave: true,
-    saveUninitialized: false,
+    saveUnintialized: false,
 });
 
 app.use(sessionMiddleware);
@@ -35,6 +35,8 @@ app.use(sessionMiddleware);
 io.use(function(socket, next) {
     sessionMiddleware(socket.request, socket.request.res, next);
 });
+
+app.use(session({secret: '123456', resave: true, saveUninitialized: true}));
 
 /*
     A PARTIR DE ESTE PUNTO GENERAREMOS NUESTRO CÓDIGO (PARA RECIBIR PETICIONES, MANEJO DB, ETC.)
@@ -65,16 +67,24 @@ app.get('/login', async function(req, res)
         let idUsuario=await MySQL.realizarQuery(`SELECT idContacto FROM Contactos WHERE usuario="${req.query.usuario}"`)
         req.session.idUsuario=idUsuario
         res.render('inicio',{chats:chats} );
-    } 
+        console.log(chats);
+    }
 });
 
+app.post('/login', function(req, res)
+{
+    //Petición POST con URL = "/login"
+    console.log("Soy un pedido POST", req.body); 
+    //En req.body vamos a obtener el objeto con los parámetros enviados desde el frontend por método POST
+    //res.render('home', { mensaje: "Hola mundo!", usuario: req.body.usuario}); //Renderizo página "home" enviando un objeto de 2 parámetros a Handlebars
+    res.render('inicio', null); //Renderizo página "home" sin pasar ningún objeto a Handlebars
+});
 app.get('/inicio', async function(req, res)
 {
     //Petición GET con URL = "/", lease, página principal.
     console.log("Arranca la página", req.query); //En req.query vamos a obtener el objeto con los parámetros enviados desde el frontend por método GET
     let chats = await MySQL.realizarQuery('SELECT nombre FROM Chats');
-    res.render('inicio',{chats:chats} ); //Renderizo página "login" sin pasar ningún objeto a Handlebars
-    console.log(chats);
+    
 });
 app.put('/login', function(req, res) {
     //Petición PUT con URL = "/login"
@@ -101,29 +111,20 @@ app.post('/enviarRegistro', async function(req, res){
         res.render('inicio', {usuario:req.body.usuario});
 });
 
-//ENVIAR MENSAJE
-app.post('/enviarMensaje', async function(req, res){
-    console.log("Soy un pedido Enviar Mensaje", req.body.mensaje);
-    await MySQL.realizarQuery(`INSERT INTO Mensajes(mensaje, fecha) VALUES ("${req.body.mensaje}", ${getDate()})`);
-    res.render('inicio', null);
-})
-
 
 io.on("connection", (socket) => {
     //Esta línea es para compatibilizar con lo que venimos escribiendo
     const req = socket.request;
+
     //Esto serìa el equivalente a un app.post, app.get...
     socket.on('incoming-message', data => {
         console.log("INCOMING MESSAGE:", data);
-        console.log("SALA: ", req.session.roomName);
-        io.to(req.session.roomName).emit("server-message", {mensaje:"MENSAJE DE SERVIDOR"})
+        io.to("").emit("server-message", {mensaje:"MENSAJE DE SERVIDOR"})
     });
 
-    socket.on("nameRoom", data => {
-        console.log("Se conectó a una sala:", data.roomName);
-        socket.join(data.roomName);
-        req.session.roomName = data.roomName;
-        io.to(data.roomName).emit("server-message", { mensaje: "Holiii" });
+    socket.on('join-room', data => {
+        console.log("INCOMING MESSAGE:", data);
+        io.emit("server-message", {mensaje:"MENSAJE DE SERVIDOR"})
     });
 
     socket.on('new message', data => {
