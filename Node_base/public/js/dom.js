@@ -1,3 +1,3 @@
-function unirseASala(button) {
-    console.log("ID del boton: ", button.id);
+function enviarMensajeId(){
+    enviarMensaje(document.getElementById("message-input").value);
 }

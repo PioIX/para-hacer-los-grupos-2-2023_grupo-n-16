@@ -13,3 +13,12 @@ socket.on("server-message", data => {
 function funcionPrueba(){
     socket.emit("incoming-message", {mensaje:" prueba"})
 }
+function unirseASala(button) {
+    console.log("ID del boton: ", button.id);
+    socket.emit("nameRoom", {roomName : button.id})
+}
+
+function enviarMensaje(mensaje){
+    socket.emit('nameRoom', {mensaje: mensaje})
+    console.log(mensaje)
+}
