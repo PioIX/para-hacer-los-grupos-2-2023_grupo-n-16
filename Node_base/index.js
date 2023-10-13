@@ -60,14 +60,18 @@ app.get('/', async function(req, res)
 app.get('/login', async function(req, res)
 {
     //Petición GET con URL = "/login"
-    console.log("Soy un pedido GET", req.query);  
+    console.log("Soy un pedido GET/login", req.query);  
     let chats = await MySQL.realizarQuery('SELECT nombre FROM Chats');
     let userLoggeado= await MySQL.realizarQuery(`SELECT * FROM Contactos WHERE usuario= "${req.query.usuario}" and contraseña="${req.query.contraseña}"`)
+    console.log(userLoggeado);
+    console.log(await MySQL.realizarQuery('SELECT * FROM Usuarios'));
     if(userLoggeado){
         let idUsuario=await MySQL.realizarQuery(`SELECT idContacto FROM Contactos WHERE usuario="${req.query.usuario}"`)
         req.session.idUsuario=idUsuario
         res.render('inicio',{chats:chats} );
         console.log(chats);
+    } else{
+        console.log("Datos incorrectos")
     }
 });
 
