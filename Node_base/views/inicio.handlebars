@@ -27,17 +27,13 @@
                 <div class="message received">
                     <p>Hola, ¿cómo estás?</p>
                 </div>
-                <div class="message sent">
-                    <p>¡Hola! Estoy bien, gracias.</p>
-                </div>
-            </div>
-
-            <div class="input-container">
-                <form action="/enviarMensaje" method="post"></form>
+            </div>            
+            <form action="/enviarMensaje" method="post"></form>
+                <div class="input-container"></div>
                     <input type="text" id="message-input" placeholder="Escribe un mensaje...">
-                    <button id="send-button" onclick="enviarMensaje(this)">Enviar</button>
-                </form>
-            </div>
+                    <button id="send-button" onclick="enviarMensaje()">Enviar</button>
+                </div>
+            </form>
         </div>
     </section>
 </body>

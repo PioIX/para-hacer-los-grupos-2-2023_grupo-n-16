@@ -1,3 +1,3 @@
-/*function enviarMensajeId(){
-    enviarMensaje(document.getElementById("message-input").value);
-}*/
+function getMensaje(){
+     return document.getElementById("message-input").value;
+}

@@ -109,14 +109,14 @@ app.get('/botonRegistrarse', function(req, res)
 
 app.post('/enviarRegistro', async function(req, res){
     console.log("Soy un pedido POST/enviarRegistro", req.body);
-        await MySQL.realizarQuery(`INSERT INTO Contactos(usuario, contraseña) VALUES("${req.body.usuario}", "${req.body.contraseña}") `)
-        console.log(await (MySQL.realizarQuery("SELECT * FROM Contactos")))
-        res.render('inicio', {usuario:req.body.usuario});
+    await MySQL.realizarQuery(`INSERT INTO Contactos(usuario, contraseña) VALUES("${req.body.usuario}", "${req.body.contraseña}") `)
+    console.log(await (MySQL.realizarQuery("SELECT * FROM Contactos")))        
+    res.render('inicio', {usuario:req.body.usuario});
 });
 
 //  chat
 app.post('/enviarMensaje', async function(req, res){
-    console.log("Soy un pedido Enviar Mensaje", req.body.mensaje);
+    console.log("Soy un pedido POST Enviar Mensaje", req.body.mensaje);
     await MySQL.realizarQuery(`INSERT INTO Mensajes(idContacto, mensaje, fecha) VALUES (${req.session.idUsuario}, "${req.body.mensaje}", ${Date()})`);
     res.render('inicio', null);
 })
@@ -139,9 +139,9 @@ io.on("connection", (socket) => {
         io.to(data.roomName).emit("server-message", { mensaje: "Holiii" });
     });
 
-    socket.on('mensaje', data => {
+    socket.on('enviarMensaje', data => {
         console.log("Se envió el mensaje: ", data.mensaje);
-        io.to(req.session.roomName).emit("server-message", { mensaje: data.mensaje });
+        io.to(req.session.roomName).emit("server-message", { 'mensajes': data.mensaje });
     });
 });
 
