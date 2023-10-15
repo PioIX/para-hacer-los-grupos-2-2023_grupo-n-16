@@ -114,6 +114,12 @@ app.post('/enviarRegistro', async function(req, res){
         res.render('inicio', {usuario:req.body.usuario});
 });
 
+//  chat
+app.post('/enviarMensaje', async function(req, res){
+    console.log("Soy un pedido Enviar Mensaje", req.body.mensaje);
+    await MySQL.realizarQuery(`INSERT INTO Mensajes(idContacto, mensaje, fecha) VALUES (${req.session.idUsuario}, "${req.body.mensaje}", ${Date()})`);
+    res.render('inicio', null);
+})
 
 io.on("connection", (socket) => {
     //Esta línea es para compatibilizar con lo que venimos escribiendo
@@ -122,16 +128,20 @@ io.on("connection", (socket) => {
     //Esto serìa el equivalente a un app.post, app.get...
     socket.on('incoming-message', data => {
         console.log("INCOMING MESSAGE:", data);
-        io.to("").emit("server-message", {mensaje:"MENSAJE DE SERVIDOR"})
+        console.log("SALA: ", req.session.roomName);
+        io.to(req.session.roomName).emit("server-message", {mensaje:"MENSAJE DE SERVIDOR"})
     });
 
-    socket.on('join-room', data => {
-        console.log("INCOMING MESSAGE:", data);
-        io.emit("server-message", {mensaje:"MENSAJE DE SERVIDOR"})
+    socket.on("nameRoom", data => {
+        console.log("Se conectó a una sala:", data.roomName);
+        socket.join(data.roomName);
+        req.session.roomName = data.roomName;
+        io.to(data.roomName).emit("server-message", { mensaje: "Holiii" });
     });
 
-    socket.on('new message', data => {
-        
+    socket.on('mensaje', data => {
+        console.log("Se envió el mensaje: ", data.mensaje);
+        io.to(req.session.roomName).emit("server-message", { mensaje: data.mensaje });
     });
 });
 
