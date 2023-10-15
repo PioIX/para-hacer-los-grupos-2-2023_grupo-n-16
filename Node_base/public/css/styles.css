@@ -19,7 +19,7 @@ body {
     border: 1px solid #ccc;
     border-radius: 5px;
     margin-bottom: 10px;
-   /*  max-height: 400px; */
+    max-height: 400px; 
     display: flex;
     flex-direction: column; /* Alinea los mensajes en una columna */
     align-items: flex-start; /* Alinea los mensajes a la izquierda */
