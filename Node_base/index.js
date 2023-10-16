@@ -117,9 +117,9 @@ app.post('/enviarRegistro', async function(req, res){
 //  chat
 app.post('/enviarMensaje', async function(req, res){
     console.log("Soy un pedido POST Enviar Mensaje", req.body.mensaje);
-    await MySQL.realizarQuery(`INSERT INTO Mensajes(idContacto, mensaje, fecha) VALUES (${req.session.idUsuario}, "${req.body.mensaje}", ${Date()})`);
+    await MySQL.realizarQuery(`INSERT INTO Mensajes(idChat, idContacto, mensaje, fecha) VALUES (${req.session.roomName}, ${req.session.idUsuario}, "${req.body.mensaje}", ${Date()})`);
     res.render('inicio', null);
-})
+});
 
 io.on("connection", (socket) => {
     //Esta línea es para compatibilizar con lo que venimos escribiendo

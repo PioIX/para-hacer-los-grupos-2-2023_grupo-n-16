@@ -21,14 +21,13 @@
                 {{/each}}
             </div>
         </div>
-        <div class="chat-container">
-            
+        <div class="chat-container">  
             <div class="chat-messages">
                 <div class="message received">
                     <p>Hola, ¿cómo estás?</p>
                 </div>
             </div>            
-            <form action="/enviarMensaje" method="post"></form>
+            <form action="/enviarMensaje"  method="POST"></form>
                 <div class="input-container"></div>
                     <input type="text" id="message-input" placeholder="Escribe un mensaje...">
                     <input type="submit" onclick="getMensaje()" id="send-button" class="btn btn-primary" value="Enviar">
