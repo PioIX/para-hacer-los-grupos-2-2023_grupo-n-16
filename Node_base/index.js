@@ -67,6 +67,7 @@ app.get('/login', async function(req, res)
     if(userLoggeado){
         let idUsuario=await MySQL.realizarQuery(`SELECT idContacto FROM Contactos WHERE usuario="${req.query.usuario}"`)
         req.session.idUsuario=idUsuario
+        req.session.nombre=req.query.usuario
         console.log(req.session.idUsuario)
         res.render('inicio',{chats:chats} );
     } else{
@@ -116,9 +117,14 @@ app.post('/enviarRegistro', async function(req, res){
 
 //  chat
 app.post('/enviarMensaje', async function(req, res){
+    let date = new Date()
     console.log("Soy un pedido POST Enviar Mensaje", req.body.mensaje);
-    await MySQL.realizarQuery(`INSERT INTO Mensajes(idChat, idContacto, mensaje, fecha) VALUES (${req.session.roomName}, ${req.session.idUsuario}, "${req.body.mensaje}", ${Date()})`);
-    res.render('inicio', null);
+    //await MySQL.realizarQuery(`INSERT INTO Mensajes(idChat, idContacto, mensaje, fecha) VALUES (${req.session.roomName}, ${req.session.idUsuario}, "${req.body.mensaje}", ${date})`);
+    let msj = {
+        usuario : req.session.nombre,
+        mensaje : req.body.mensaje
+    }
+    res.render('inicio', {msjs:msj});
 });
 
 io.on("connection", (socket) => {

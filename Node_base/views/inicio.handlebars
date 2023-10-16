@@ -26,10 +26,18 @@
                 <div class="message received">
                     <p>Hola, ¿cómo estás?</p>
                 </div>
-            </div>            
-            <form action="/enviarMensaje"  method="POST"></form>
+                {{#each msjs}}     
+                <div class="message received">
+                    <strong>{{this.usuario}}</strong>
+                    <p>{{this.mensaje}}</p>
+                </div>
+                {{/each}}
+            </div>
+        </div>   
+    
+            <form action="/enviarMensaje"  method="POST">
                 <div class="input-container"></div>
-                    <input type="text" id="message-input" placeholder="Escribe un mensaje...">
+                    <input type="text" id="message-input" name="mensaje" placeholder="Escribe un mensaje...">
                     <input type="submit" onclick="getMensaje()" id="send-button" class="btn btn-primary" value="Enviar">
                 </div>
             </form>
