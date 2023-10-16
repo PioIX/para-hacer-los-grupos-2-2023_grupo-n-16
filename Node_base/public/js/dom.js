@@ -16,14 +16,13 @@ async function putJSON(data) {
       console.log("Success:", result);
   
     if (result.validar == false) {
-        alert("Los datos son incorrectos")
-    }else{
-          document.getElementById("formlogin").submit()
-    }
-        
-    } catch (error) {
-    console.error("Error:", error);
+      alert("Los datos son incorrectos")
+  } else {
+      document.getElementById("formlogin").submit()
   }
+} catch (error) {
+  console.error("Error en la solicitud:", error);
+}
 }
 
 function login() {
