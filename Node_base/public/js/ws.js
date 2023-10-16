@@ -18,11 +18,7 @@ function unirseASala(button) {
     socket.emit("nameRoom", {roomName : button.id})
 }
 
-function enviarMensaje(mensaje){
-    socket.emit('enviarMensaje', {mensaje: mensaje});
+function recibirMensaje(mensaje){
+    socket.emit('nuevoMensaje', {mensaje: mensaje});
     console.log("El cliente mandó: ", mensaje);
-}
-
-function button_enviarMensaje(){
-    enviarMensaje(getMensaje());
 }

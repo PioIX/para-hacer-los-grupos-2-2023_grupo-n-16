@@ -139,9 +139,9 @@ io.on("connection", (socket) => {
         io.to(data.roomName).emit("server-message", { mensaje: "Holiii" });
     });
 
-    socket.on('enviarMensaje', data => {
-        console.log("Se envió el mensaje: ", data.mensaje);
-        io.to(req.session.roomName).emit("server-message", { 'mensajes': data.mensaje });
+    socket.on('nuevoMensaje', data => {
+        console.log("Se envió el mensaje: ", data.mensaje, "a la sala", req.session.roomName);
+        io.to(req.session.roomName).emit("server-message", { mensajes: data.mensaje });
     });
 });
 
