@@ -27,7 +27,7 @@ const io= require('socket.io')(server);
 const sessionMiddleware=session({
     secret: 'sararasthastka',
     resave: true,
-    saveUnintialized: false,
+    saveUninitialized: false,
 });
 
 app.use(sessionMiddleware);
@@ -138,11 +138,23 @@ io.on("connection", (socket) => {
         req.session.roomName = data.roomName;
         io.to(data.roomName).emit("server-message", { mensaje: "Holiii" });
     });
+    // En el cliente (script del navegador)
+    socket.on("nuevo-mensaje", data => {
+        console.log("Nuevo mensaje recibido:", data.mensaje);
 
-    socket.on('nuevoMensaje', data => {
+        // Actualiza el contenedor de mensajes con el nuevo mensaje
+        const messageContainer = document.getElementById("message-container");
+        const newMessageElement = document.createElement("div");
+        newMessageElement.className = "message received";
+        newMessageElement.innerHTML = `<p>${data.mensaje}</p>`;
+        messageContainer.appendChild(newMessageElement);
+    });
+
+  /*  socket.on('nuevoMensaje', data => {
         console.log("Se envió el mensaje: ", data.mensaje, "a la sala", req.session.roomName);
         io.to(req.session.roomName).emit("server-message", { mensajes: data.mensaje });
-    });
+    });*/
+    
 });
 
 setInterval(() => io.emit("server-message", { mensaje: "MENSAJE DEL SERVIDOR" }), 2000);
