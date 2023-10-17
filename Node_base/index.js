@@ -70,55 +70,20 @@ app.get('/login', function(req, res)
 app.post('/login', async function(req, res)
 {
     console.log("Soy un pedido POST/login", req.body); 
-    let chats = await MySQL.realizarQuery('SELECT nombre FROM Chats');
+    let chats = await MySQL.realizarQuery('SELECT * FROM Chats');
     let userLoggeado= await MySQL.realizarQuery(`SELECT * FROM Contactos WHERE usuario= "${req.body.usuario}" and contraseña="${req.body.contraseña}"`)
     //Chequeo el largo del vector a ver si tiene datos
     if (userLoggeado.length > 0) {
-        let idUsuario=await MySQL.realizarQuery(`SELECT idContacto FROM Contactos WHERE usuario="${req.query.usuario}"`)
-        req.session.idUsuario=idUsuario
+        req.session.idUsuario=userLoggeado[0].idContacto
         console.log(req.session.idUsuario)
         //Armo un objeto para responder
         res.render('inicio',{chats:chats} );
-        console.log(chats);  
+        console.log(chats);   
     }
     else{
         res.send({validar:false})    
     }
 });
-
-
-/*app.get('/login', async function(req, res)
-{
-    //Petición GET con URL = "/login"
-    console.log("Soy un pedido GET/login", req.query);  
-    let chats = await MySQL.realizarQuery('SELECT nombre FROM Chats');
-    let userLoggeado= await MySQL.realizarQuery(`SELECT * FROM Contactos WHERE usuario= "${req.query.usuario}" and contraseña="${req.query.contraseña}"`)
-    console.log(userLoggeado);
-    if(userLoggeado){
-        let idUsuario=await MySQL.realizarQuery(`SELECT idContacto FROM Contactos WHERE usuario="${req.query.usuario}"`)
-        req.session.idUsuario=idUsuario
-        req.session.nombre=req.query.usuario
-        console.log(req.session.idUsuario)
-        res.render('inicio',{chats:chats} );
-    } else{
-        console.log("Datos incorrectos")
-    }
-});
-
-app.post('/login', function(req, res)
-{
-    //Petición POST con URL = "/login"
-    console.log("Soy un pedido POST", req.body); 
-   
-    res.render('inicio', null); //Renderizo página "home" sin pasar ningún objeto a Handlebars
-});*/
-/*app.get('/inicio', async function(req, res)
-{
-    //Petición GET con URL = "/", lease, página principal.
-    console.log("Arranca la página", req.query); //En req.query vamos a obtener el objeto con los parámetros enviados desde el frontend por método GET
-    let chats = await MySQL.realizarQuery('SELECT nombre FROM Chats');
-    
-});*/
 
 app.put('/login', function(req, res) {
     //Petición PUT con URL = "/login"
@@ -152,26 +117,6 @@ app.post('/enviarRegistro', async function(req, res){
 });
         
 
-//  chat
-app.get('/elegirChat', async function(req,res){
-    console.log("Soy un pedido GET/elegirChat");
-    req.session.roomName=req.query.nombreChat;
-    console.log("El usuario eligió el contacto: ", req.session.roomName)
-    res.render('inicio', null);
-})
-
-app.post('/enviarMensaje', async function(req, res){
-    let date = new Date()
-    console.log("Soy un pedido POST Enviar Mensaje", req.body.mensaje);
-    console.log(req.session.roomName)
-    //await MySQL.realizarQuery(`INSERT INTO Mensajes(idChat, idContacto, mensaje) VALUES (${req.session.roomName}, ${req.session.idUsuario}, "${req.body.mensaje}")`);
-    let msj = {
-        usuario : req.session.nombre,
-        mensaje : req.body.mensaje
-    }
-    res.render('inicio', {msjs:msj});
-});
-
 //WEB SOCKET
 io.on("connection", (socket) => {
     //Esta línea es para compatibilizar con lo que venimos escribiendo
@@ -184,18 +129,21 @@ io.on("connection", (socket) => {
         io.to(req.session.roomName).emit("server-message", {mensaje:"MENSAJE DE SERVIDOR"})
     });
 
-    socket.on('nameRoom', data => {
+    socket.on('nameRoom', (data) => {
         console.log("Se conectó a una sala:", data.roomName);
         socket.join(data.roomName);
+        req.session.roomName=data.roomName
+        req.session.roomId=data.roomId
+        //req.session.save();
         io.to(data.roomName).emit("server-message", { mensaje: "Holiii" });
     });
 
     //socket.emit('mensajes', mensaje)
 
-    socket.on('nuevoMensaje', data => {
+    socket.on('nuevoMensaje', async (data) => {
         console.log("Se envió el mensaje: ", data.mensaje, "a la sala", req.session.roomName);
         io.to(req.session.roomName).emit("server-message", { mensajes: data.mensaje });
-        //io.sockets.emit('mensajes', mensaje)
+        await MySQL.realizarQuery(`INSERT INTO Mensajes(idChat, idContacto, fecha, mensaje) VALUES (${req.session.roomId}, ${req.session.idUsuario}, NOW(), "${data.mensaje}")`);
     });
 });
 
