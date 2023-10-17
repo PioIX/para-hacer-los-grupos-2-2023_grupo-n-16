@@ -21,23 +21,12 @@
             </div>
         </div>
         <div class="chat-container">  
-            <div class="chat-messages">
-                <div class="message received">
-                    <p>Hola, ¿cómo estás?</p>
-                </div> 
-                <div class="message received">
-                    <strong>{{msjs.usuario}}</strong>
-                    <p>{{msjs.mensaje}}</p>
-                </div>
+            <div class="chat-messages" id="chat-messages">
             </div>
         </div>   
-    
-            <form action="/enviarMensaje"  method="POST">
-                <div class="input-container"></div>
-                    <input type="text" id="message-input" name="mensaje" placeholder="Escribe un mensaje...">
-                    <input type="submit" onclick="getMensaje()" id="send-button" class="btn btn-primary" value="Enviar">
-                </div>
-            </form>
+        <div class="input-container">
+            <input type="text" id="message-input" name="mensaje" placeholder="Escribe un mensaje...">
+            <input type="submit" onclick="getMensaje()" id="send-button" class="btn btn-primary" value="Enviar">
         </div>
     </section>
 </body>

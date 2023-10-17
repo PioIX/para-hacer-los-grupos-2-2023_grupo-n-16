@@ -78,7 +78,7 @@ app.post('/login', async function(req, res)
         req.session.nombre = userLoggeado[0].usuario;
         //Armo un objeto para responder
         res.render('inicio',{chats:chats} );
-        console.log(chats);   
+        console.log(req.session.idUsuario);   
     }
     else{
         res.send({validar:false})    
@@ -128,23 +128,23 @@ io.on("connection", (socket) => {
         io.to(req.session.roomName).emit("server-message", {mensaje:"MENSAJE DE SERVIDOR"})
     });
 
-    socket.on('nameRoom', (data) => {
+    socket.on('nameRoom', async (data) => {
         console.log("Se conectó a una sala:", data.roomName);
         socket.join(data.roomName);
         req.session.roomName=data.roomName
         req.session.roomId=data.roomId
         //req.session.save();
-        io.to(data.roomName).emit("server-message", { mensaje: "Holiii" });
-    });
-
-    socket.emit('mensajes', async (mensajes)=>{
-        await MySQL.realizarQuery(`SELECT * FROM Mensajes WHERE idContacto=${req.session.idUsuario} AND idChat=${req.session.idRoom}`)
+        let msjs = await MySQL.realizarQuery(`SELECT mensaje, usuario FROM Mensajes INNER JOIN Contactos ON Mensajes.idContacto=Contactos.idContacto WHERE Mensajes.idContacto=${req.session.idUsuario} and Mensajes.idChat=${req.session.roomId};`);
+        console.log(msjs);
+        io.to(data.roomName).emit("mensajes", { msjs: msjs });
     });
 
     socket.on('nuevoMensaje', async (data) => {
         console.log("Se envió el mensaje: ", data.mensaje, "a la sala", req.session.roomName);
-        io.to(req.session.roomName).emit("server-message", { mensajes: data.mensaje });
         await MySQL.realizarQuery(`INSERT INTO Mensajes(idChat, idContacto, fecha, mensaje) VALUES (${req.session.roomId}, ${req.session.idUsuario}, NOW(), "${data.mensaje}")`);
+        let msjs = await MySQL.realizarQuery(`SELECT mensaje, usuario FROM Mensajes INNER JOIN Contactos ON Mensajes.idContacto=Contactos.idContacto WHERE Mensajes.idContacto=${req.session.idUsuario} and Mensajes.idChat=${req.session.roomId};`);
+        io.to(req.session.roomName).emit("mensajes", { msjs:msjs });
+        
     });
 });
 
