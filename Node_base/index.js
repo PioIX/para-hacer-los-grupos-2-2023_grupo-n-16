@@ -138,7 +138,9 @@ io.on("connection", (socket) => {
         io.to(data.roomName).emit("server-message", { mensaje: "Holiii" });
     });
 
-    //socket.emit('mensajes', mensaje)
+    socket.emit('mensajes', async (mensajes)=>{
+        await MySQL.realizarQuery(`SELECT * FROM Mensajes WHERE idContacto=${req.session.idUsuario} AND idChat=${req.session.idRoom}`)
+    });
 
     socket.on('nuevoMensaje', async (data) => {
         console.log("Se envió el mensaje: ", data.mensaje, "a la sala", req.session.roomName);
