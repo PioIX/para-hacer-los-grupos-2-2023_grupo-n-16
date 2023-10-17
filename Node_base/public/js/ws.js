@@ -14,8 +14,8 @@ function funcionPrueba(){
     socket.emit("incoming-message", {mensaje:" prueba"})
 }
 function unirseASala(button) {
-    console.log("ID del boton: ", button.id);
-    socket.emit("nameRoom", {roomName : button.id})
+    console.log("ID del boton: ", button.nombre);
+    socket.emit("nameRoom", {roomName : button.name, roomId: button.id})
 }
 
 function recibirMensaje(mensaje){

@@ -12,15 +12,13 @@
             <div class="search-bar">
                 <input type="text" placeholder="Buscar contactos..."><br>
             </div>
-            <form action="/elegirChat" method="GET">
             <div class="contact-list">
                 {{#each chats}}
                 <div class="contact-info">
-                    <button id="{{this.nombre}}" name="nombreChat" onclick="unirseASala(this)">{{this.nombre}}</button>
+                    <button id="{{this.idChat}}" name="{{this.nombre}}" onclick="unirseASala(this)">{{this.nombre}}</button>
                 </div>
                 {{/each}}
             </div>
-            </form>
         </div>
         <div class="chat-container">  
             <div class="chat-messages">
