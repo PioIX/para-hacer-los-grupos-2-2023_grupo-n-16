@@ -22,3 +22,10 @@ function recibirMensaje(mensaje){
     socket.emit('nuevoMensaje', {mensaje: mensaje});
     console.log("El cliente mandó: ", mensaje);
 }
+ /*function render(msj){
+    var html= ` <div class="message received">
+                    <strong>${msj.usuario}</strong>
+                    <p>${msj.mensaje}</p>
+                </div>`
+    document.getElementsByClassName("chat-container").innerHTML += html
+ }*/
