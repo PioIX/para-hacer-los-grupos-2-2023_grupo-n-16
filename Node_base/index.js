@@ -62,12 +62,6 @@ app.post('/iralogin', function(req, res){
 });
 
 //--------------
-app.get('/login', function(req, res)
-{
-    //Petición GET con URL = "/login"
-    console.log("Soy un pedido GET", req.query); 
-    res.render('inicio', null); //Renderizo página "home" sin pasar ningún objeto a Handlebars
-});
 app.post('/login', async function(req, res)
 {
     console.log("Soy un pedido POST/login", req.body); 
@@ -75,8 +69,8 @@ app.post('/login', async function(req, res)
     let userLoggeado= await MySQL.realizarQuery(`SELECT * FROM Contactos WHERE usuario= "${req.body.usuario}" and contraseña="${req.body.contraseña}"`)
     //Chequeo el largo del vector a ver si tiene datos
     if (userLoggeado.length > 0) {
-        let idUsuario=await MySQL.realizarQuery(`SELECT idContacto FROM Contactos WHERE usuario="${req.query.usuario}"`)
-        req.session.idUsuario=idUsuario
+        req.session.idUsuario=userLoggeado[0].idContacto;
+        console.log(req.session.idUsuario);
         //Armo un objeto para responder
         res.render('inicio',{chats:chats} );
         console.log(chats);  
