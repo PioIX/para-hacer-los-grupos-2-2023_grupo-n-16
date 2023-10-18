@@ -15,29 +15,18 @@
             <div class="contact-list">
                 {{#each chats}}
                 <div class="contact-info">
-                    <h3>{{this.nombre}}</h3>
-                    <button id="{{this.nombre}}" onclick="unirseASala(this)">{{this.nombre}}</button>
+                    <button id="{{this.idChat}}" name="{{this.nombre}}" onclick="unirseASala(this)">{{this.nombre}}</button>
                 </div>
                 {{/each}}
             </div>
         </div>
-        <div class="chat-container">
-            
-            <div class="chat-messages">
-                <div class="message received">
-                    <p>Hola, ¿cómo estás?</p>
-                </div>
-                <div class="message sent">
-                    <p>¡Hola! Estoy bien, gracias.</p>
-                </div>
+        <div class="chat-container">  
+            <div class="chat-messages" id="chat-messages">
             </div>
-
-            <div class="input-container">
-                <form action="/enviarMensaje" method="post"></form>
-                    <input type="text" id="message-input" placeholder="Escribe un mensaje...">
-                    <button id="send-button" onclick="enviarMensaje()">Enviar</button>
-                </form>
-            </div>
+        </div>   
+        <div class="input-container">
+            <input type="text" id="message-input" name="mensaje" placeholder="Escribe un mensaje...">
+            <input type="submit" onclick="getMensaje()" id="send-button" class="btn btn-primary" value="Enviar">
         </div>
     </section>
 </body>

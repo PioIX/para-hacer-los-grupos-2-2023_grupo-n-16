@@ -1,3 +1,7 @@
+
+function getMensaje(){
+     recibirMensaje(document.getElementById("message-input").value);
+
 //login
 async function putJSON(data) {
     //putJSON() es solo el nombre de esta funcion que lo pueden cambiar    
@@ -39,8 +43,4 @@ function login() {
     //data es el objeto que le paso al back
     putJSON(data)
   }
-  
-
-function enviarMensajeId(){
-    enviarMensaje(document.getElementById("message-input").value);
 }

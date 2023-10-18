@@ -6,8 +6,8 @@ const bodyParser = require('body-parser'); //Para el manejo de los strings JSON
 const MySQL = require('./modulos/mysql'); //Añado el archivo mysql.js presente en la carpeta módulos
 //const session = require('express-session')
 
+const session = require('express-session'); //Para usar variables de sesión
 const app = express(); //Inicializo express para el manejo de las peticiones
-const session = require('express-session');
 app.use(express.static('public')); //Expongo al lado cliente la carpeta "public"
 
 app.use(bodyParser.urlencoded({ extended: false })); //Inicializo el parser JSON
@@ -37,7 +37,6 @@ io.use(function(socket, next) {
 });
 
 app.use(session({secret: '123456', resave: true, saveUninitialized: true}));
-
 /*
     A PARTIR DE ESTE PUNTO GENERAREMOS NUESTRO CÓDIGO (PARA RECIBIR PETICIONES, MANEJO DB, ETC.)
     A PARTIR DE ESTE PUNTO GENERAREMOS NUESTRO CÓDIGO (PARA RECIBIR PETICIONES, MANEJO DB, ETC.)
@@ -71,50 +70,20 @@ app.get('/login', function(req, res)
 app.post('/login', async function(req, res)
 {
     console.log("Soy un pedido POST/login", req.body); 
-    let chats = await MySQL.realizarQuery('SELECT nombre FROM Chats');
+    let chats = await MySQL.realizarQuery('SELECT * FROM Chats');
     let userLoggeado= await MySQL.realizarQuery(`SELECT * FROM Contactos WHERE usuario= "${req.body.usuario}" and contraseña="${req.body.contraseña}"`)
     //Chequeo el largo del vector a ver si tiene datos
     if (userLoggeado.length > 0) {
-        let idUsuario=await MySQL.realizarQuery(`SELECT idContacto FROM Contactos WHERE usuario="${req.query.usuario}"`)
-        req.session.idUsuario=idUsuario
+        req.session.idUsuario = userLoggeado[0].idContacto;
+        req.session.nombre = userLoggeado[0].usuario;
         //Armo un objeto para responder
         res.render('inicio',{chats:chats} );
-        console.log(chats);  
+        console.log(req.session.idUsuario);   
     }
     else{
         res.send({validar:false})    
     }
 });
-
-
-/*app.get('/login', async function(req, res)
-{
-    //Petición GET con URL = "/login"
-    console.log("Soy un pedido GET", req.query);  
-    let chats = await MySQL.realizarQuery('SELECT nombre FROM Chats');
-    let userLoggeado= await MySQL.realizarQuery(`SELECT * FROM Contactos WHERE usuario= "${req.query.usuario}" and contraseña="${req.query.contraseña}"`)
-    if(userLoggeado){
-        let idUsuario=await MySQL.realizarQuery(`SELECT idContacto FROM Contactos WHERE usuario="${req.query.usuario}"`)
-        req.session.idUsuario=idUsuario
-        res.render('inicio',{chats:chats} );
-        console.log(chats);
-    }
-});
-
-app.post('/login', function(req, res)
-{
-    //Petición POST con URL = "/login"
-    console.log("Soy un pedido POST", req.body); 
-   
-    res.render('inicio', null); //Renderizo página "home" sin pasar ningún objeto a Handlebars
-});*/
-/*app.get('/inicio', async function(req, res)
-{
-    //Petición GET con URL = "/", lease, página principal.
-    console.log("Arranca la página", req.query); //En req.query vamos a obtener el objeto con los parámetros enviados desde el frontend por método GET
-    let chats = await MySQL.realizarQuery('SELECT nombre FROM Chats');
-    
-});*/
 
 app.put('/login', function(req, res) {
     //Petición PUT con URL = "/login"
@@ -142,19 +111,12 @@ app.get('/botonRegistrarse', function(req, res)
 
 app.post('/enviarRegistro', async function(req, res){
     console.log("Soy un pedido POST/enviarRegistro", req.body);
-        await MySQL.realizarQuery(`INSERT INTO Contactos(usuario, contraseña) VALUES("${req.body.usuario}", "${req.body.contraseña}") `)
-        console.log(await (MySQL.realizarQuery("SELECT * FROM Contactos")))
-        res.render('inicio', {usuario:req.body.usuario});
+    await MySQL.realizarQuery(`INSERT INTO Contactos(usuario, contraseña) VALUES("${req.body.usuario}", "${req.body.contraseña}") `)
+    console.log(await (MySQL.realizarQuery("SELECT * FROM Contactos")))        
+    res.render('inicio', {usuario:req.body.usuario});
 });
         
-
-//  chat
-app.post('/enviarMensaje', async function(req, res){
-    console.log("Soy un pedido Enviar Mensaje", req.body.mensaje);
-    await MySQL.realizarQuery(`INSERT INTO Mensajes(idContacto, mensaje, fecha) VALUES (${req.session.idUsuario}, "${req.body.mensaje}", ${Date()})`);
-    res.render('inicio', null);
-})
-
+//WEB SOCKET
 io.on("connection", (socket) => {
     //Esta línea es para compatibilizar con lo que venimos escribiendo
     const req = socket.request;
@@ -166,16 +128,23 @@ io.on("connection", (socket) => {
         io.to(req.session.roomName).emit("server-message", {mensaje:"MENSAJE DE SERVIDOR"})
     });
 
-    socket.on("nameRoom", data => {
+    socket.on('nameRoom', async (data) => {
         console.log("Se conectó a una sala:", data.roomName);
         socket.join(data.roomName);
-        req.session.roomName = data.roomName;
-        io.to(data.roomName).emit("server-message", { mensaje: "Holiii" });
+        req.session.roomName=data.roomName
+        req.session.roomId=data.roomId
+        //req.session.save();
+        let msjs = await MySQL.realizarQuery(`SELECT mensaje, usuario FROM Mensajes INNER JOIN Contactos ON Mensajes.idContacto=Contactos.idContacto WHERE Mensajes.idChat=${req.session.roomId};`);
+        console.log(msjs);
+        io.to(data.roomName).emit("mensajes", { msjs: msjs });
     });
 
-    socket.on('mensaje', data => {
-        console.log("Se envió el mensaje: ", data.mensaje);
-        io.to(req.session.roomName).emit("server-message", { mensaje: data.mensaje });
+    socket.on('nuevoMensaje', async (data) => {
+        console.log("Se envió el mensaje: ", data.mensaje, "a la sala", req.session.roomName);
+        await MySQL.realizarQuery(`INSERT INTO Mensajes(idChat, idContacto, fecha, mensaje) VALUES (${req.session.roomId}, ${req.session.idUsuario}, NOW(), "${data.mensaje}")`);
+        let msjs = await MySQL.realizarQuery(`SELECT mensaje, usuario FROM Mensajes INNER JOIN Contactos ON Mensajes.idContacto=Contactos.idContacto WHERE Mensajes.idContacto=${req.session.idUsuario} and Mensajes.idChat=${req.session.roomId} ORDER BY idMensaje DESC LIMIT 1;`);
+        io.to(req.session.roomName).emit("mensajes", { msjs:msjs });
+        
     });
 });
 

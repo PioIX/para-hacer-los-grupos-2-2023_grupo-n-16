@@ -14,11 +14,27 @@ function funcionPrueba(){
     socket.emit("incoming-message", {mensaje:" prueba"})
 }
 function unirseASala(button) {
-    console.log("ID del boton: ", button.id);
-    socket.emit("nameRoom", {roomName : button.id})
+    console.log("ID del boton: ", button.nombre);
+    socket.emit("nameRoom", {roomName : button.name, roomId: button.id})
 }
 
-function enviarMensaje(mensaje){
-    socket.emit('nameRoom', {mensaje: mensaje})
-    console.log(mensaje)
+function recibirMensaje(mensaje){
+    socket.emit('nuevoMensaje', {mensaje: mensaje});
+    console.log("El cliente mandó: ", mensaje);
 }
+
+socket.on("mensajes", data => {
+    render(data.msjs)
+    console.log(data.mjs)
+})
+
+function render(msj){
+    var html=""
+    for (let i = 0; i<msj.length; i++){
+        html+=` <div class="message received">
+                    <strong>${msj[i].usuario}</strong>
+                    <p>${msj[i].mensaje}</p>
+                </div>`
+    }
+    document.getElementById("chat-messages").innerHTML += html
+ }
