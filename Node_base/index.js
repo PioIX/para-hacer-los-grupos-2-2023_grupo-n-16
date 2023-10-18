@@ -134,7 +134,7 @@ io.on("connection", (socket) => {
         req.session.roomName=data.roomName
         req.session.roomId=data.roomId
         //req.session.save();
-        let msjs = await MySQL.realizarQuery(`SELECT mensaje, usuario FROM Mensajes INNER JOIN Contactos ON Mensajes.idContacto=Contactos.idContacto WHERE Mensajes.idContacto=${req.session.idUsuario} and Mensajes.idChat=${req.session.roomId};`);
+        let msjs = await MySQL.realizarQuery(`SELECT mensaje, usuario FROM Mensajes INNER JOIN Contactos ON Mensajes.idContacto=Contactos.idContacto WHERE Mensajes.idChat=${req.session.roomId};`);
         console.log(msjs);
         io.to(data.roomName).emit("mensajes", { msjs: msjs });
     });
@@ -142,7 +142,7 @@ io.on("connection", (socket) => {
     socket.on('nuevoMensaje', async (data) => {
         console.log("Se envió el mensaje: ", data.mensaje, "a la sala", req.session.roomName);
         await MySQL.realizarQuery(`INSERT INTO Mensajes(idChat, idContacto, fecha, mensaje) VALUES (${req.session.roomId}, ${req.session.idUsuario}, NOW(), "${data.mensaje}")`);
-        let msjs = await MySQL.realizarQuery(`SELECT mensaje, usuario FROM Mensajes INNER JOIN Contactos ON Mensajes.idContacto=Contactos.idContacto WHERE Mensajes.idContacto=${req.session.idUsuario} and Mensajes.idChat=${req.session.roomId};`);
+        let msjs = await MySQL.realizarQuery(`SELECT mensaje, usuario FROM Mensajes INNER JOIN Contactos ON Mensajes.idContacto=Contactos.idContacto WHERE Mensajes.idContacto=${req.session.idUsuario} and Mensajes.idChat=${req.session.roomId} ORDER BY idMensaje DESC LIMIT 1;`);
         io.to(req.session.roomName).emit("mensajes", { msjs:msjs });
         
     });
