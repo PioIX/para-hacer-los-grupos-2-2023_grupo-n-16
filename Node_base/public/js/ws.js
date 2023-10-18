@@ -15,6 +15,7 @@ function funcionPrueba(){
 }
 function unirseASala(button) {
     console.log("ID del boton: ", button.nombre);
+    document.getElementById("chat-messages").innerHTML = '';
     socket.emit("nameRoom", {roomName : button.name, roomId: button.id})
 }
 

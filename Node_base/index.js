@@ -130,6 +130,9 @@ io.on("connection", (socket) => {
 
     socket.on('nameRoom', async (data) => {
         console.log("Se conectó a una sala:", data.roomName);
+        if(req.session.roomName != ""){
+            socket.leave(req.session.roomName);
+        }
         socket.join(data.roomName);
         req.session.roomName=data.roomName
         req.session.roomId=data.roomId
